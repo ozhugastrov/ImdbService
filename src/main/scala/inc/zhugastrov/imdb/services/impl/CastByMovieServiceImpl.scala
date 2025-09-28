@@ -22,7 +22,7 @@ class CastByMovieServiceImpl @Inject()(imdbClient: Service[Request, Response]) e
         parseResponse("CastByMovieService", rawResponse, {
           logger.debug(s"Got credits response: ${rawResponse.contentString}")
           val json = Json.parse(rawResponse.contentString)
-          (json \ "credits").as[List[Actor]]
+          (json \ "credits").asOpt[List[Actor]].getOrElse(List.empty)
         })
       }
     )
