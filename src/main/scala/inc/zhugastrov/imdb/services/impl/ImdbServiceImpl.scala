@@ -3,13 +3,13 @@ package inc.zhugastrov.imdb.services.impl
 import com.google.inject.Inject
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.{Future, Return, Throw}
-import com.typesafe.config.Config
+import inc.zhugastrov.imdb.cache.Cache
 import inc.zhugastrov.imdb.domain.Movie
 import inc.zhugastrov.imdb.domain.ParentsGuideCategory.{filterBy => categoryFilter}
 import inc.zhugastrov.imdb.domain.SeverityLevel.{filterBy => severityFilter}
 import inc.zhugastrov.imdb.json.Formats._
 import inc.zhugastrov.imdb.services._
-import inc.zhugastrov.imdb.utils.{Cache, ExternalServiceException}
+import inc.zhugastrov.imdb.utils.ExternalServiceException
 import org.slf4j.LoggerFactory
 import play.api.libs.json.Json
 
@@ -18,11 +18,8 @@ class ImdbServiceImpl @Inject()(titlesByIdService: TitlesByIdService,
                                 parentsGuideService: ParentsGuideService,
                                 titleNameToIdService: TitleNameToIdService,
                                 castByMovieService: CastByMovieService,
-                                config: Config) extends ImdbService {
-  private val ttl = config.getDuration("cache.ttl")
-  private val cleanupInterval = config.getDuration("cache.cleanupInterval")
-  private val requestCache = new Cache[String, Seq[Movie]](ttl, cleanupInterval)
-  private val movieCache = new Cache[String, Movie](ttl, cleanupInterval)
+                                requestCache: Cache[String, Seq[Movie]],
+                                movieCache: Cache[String, Movie]) extends ImdbService {
   private val logger = LoggerFactory.getLogger(getClass)
 
   override def apply(request: Request): Future[Response] = {

@@ -1,4 +1,6 @@
-package inc.zhugastrov.imdb.utils
+package inc.zhugastrov.imdb.cache.impl
+
+import inc.zhugastrov.imdb.cache.Cache
 
 import java.time.{Duration, Instant}
 import java.util.concurrent.ConcurrentHashMap
@@ -6,7 +8,7 @@ import scala.concurrent.ExecutionContext.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class Cache[K, V] (ttl: Duration, cleanupInterval: Duration) {
+class SimpleCache[K, V](ttl: Duration, cleanupInterval: Duration) extends Cache[K, V] {
   private case class CacheEntry(value: V, expiresAt: Instant)
 
   implicit val ec: ExecutionContext = global

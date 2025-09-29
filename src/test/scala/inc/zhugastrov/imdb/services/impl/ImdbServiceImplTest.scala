@@ -42,8 +42,10 @@ class ImdbServiceImplTest extends AnyFunSuite with MockitoSugar with BeforeAndAf
   private val parentsGuideService = mock[ParentsGuideService]
   private val titleNameToIdService = mock[TitleNameToIdService]
   private val castByMovieService = mock[CastByMovieService]
+  private val requestCache = new inc.zhugastrov.imdb.cache.impl.SimpleCache[String, Seq[Movie]](java.time.Duration.ofSeconds(60), java.time.Duration.ofSeconds(60))
+  private val movieCache = new inc.zhugastrov.imdb.cache.impl.SimpleCache[String, Movie](java.time.Duration.ofSeconds(60), java.time.Duration.ofSeconds(60))
   // Provide config to ImdbServiceImpl
-  private val imdbService = new ImdbServiceImpl(moviesByIdService, parentsGuideService, titleNameToIdService, castByMovieService, config)
+  private val imdbService = new ImdbServiceImpl(moviesByIdService, parentsGuideService, titleNameToIdService, castByMovieService, requestCache, movieCache)
 
   def createRequest(params: Map[String, String]): Request = {
     val request = Request(params = params.toSeq: _*)
