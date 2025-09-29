@@ -16,7 +16,7 @@ class CastByMovieServiceImpl @Inject()(imdbClient: Service[Request, Response]) e
 
 
   override def getCastByMovie(movieId: String): Future[List[Actor]] = {
-    val req = getRequest(s"/titles/$movieId/credits", Seq(("pageSize", "50")))
+    val req = getRequest(s"/titles/$movieId/credits", Seq(("pageSize", "50"), ("categories", "actor"), ("categories", "actress")))
     imdbClient(req).flatMap(
       rawResponse => {
         parseResponse("CastByMovieService", rawResponse, {

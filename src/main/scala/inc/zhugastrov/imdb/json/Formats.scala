@@ -1,7 +1,6 @@
 package inc.zhugastrov.imdb.json
 
 
-import inc.zhugastrov.imdb.domain.Movie.actorCategories
 import inc.zhugastrov.imdb.domain.ParentsGuideCategory.ParentsGuideCategory
 import inc.zhugastrov.imdb.domain.SeverityLevel.SeverityLevel
 import inc.zhugastrov.imdb.domain._
@@ -25,11 +24,11 @@ object Formats {
   implicit val actorFormat: Format[Actor] = {
     val actorReads: Reads[Actor] = (
       (JsPath \ "name").read[Person] and
-        (JsPath \ "category").read[String]
+        (JsPath \ "characters").readWithDefault(List.empty[String])
       )(Actor.apply _)
     val actorWrites: Writes[Actor] = (
       JsPath.write[Person] and
-        (JsPath \ "category").write[String]
+        (JsPath \ "characters").write[List[String]]
       )(unlift(Actor.unapply))
     Format(actorReads, actorWrites)
   }
@@ -57,11 +56,11 @@ object Formats {
 
   implicit val movieWrites: Writes[Movie] = (
     JsPath.write[Title] and
-      (JsPath \ "actors").write[List[Actor]] and
+      (JsPath \ "actors").write[List[Person]] and
       (JsPath \ "cast").write[List[Actor]]
     )(movie => {
-    val actors = movie.credits.filter(actor => actorCategories.contains(actor.category)).take(5)
-    val cast = movie.credits.filter(actor => !actors.map(_.person.id).contains(actor.person.id)).take(5)
+    val actors = movie.credits.take(5).map(_.person)
+    val cast = movie.credits.filter(actor => !actors.map(_.id).contains(actor.person.id)).take(5)
     (movie.title, actors, cast)
   })
 }
