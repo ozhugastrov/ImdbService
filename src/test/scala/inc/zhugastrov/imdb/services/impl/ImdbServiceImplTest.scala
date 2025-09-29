@@ -3,6 +3,7 @@ package inc.zhugastrov.imdb.services.impl
 import com.twitter.finagle.http.{Request, Status}
 import com.twitter.util.{Await, Future}
 import com.typesafe.config.Config
+import inc.zhugastrov.imdb.cache.impl.GuavaCacheImpl
 import inc.zhugastrov.imdb.domain._
 import inc.zhugastrov.imdb.json.Formats._
 import inc.zhugastrov.imdb.services.{CastByMovieService, ParentsGuideService, TitleNameToIdService, TitlesByIdService}
@@ -12,6 +13,8 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Json, Reads}
+
+import java.time.Duration
 
 class ImdbServiceImplTest extends AnyFunSuite with MockitoSugar with BeforeAndAfterEach {
   val titleReads: Reads[Title] = (
@@ -42,8 +45,8 @@ class ImdbServiceImplTest extends AnyFunSuite with MockitoSugar with BeforeAndAf
   private val parentsGuideService = mock[ParentsGuideService]
   private val titleNameToIdService = mock[TitleNameToIdService]
   private val castByMovieService = mock[CastByMovieService]
-  private val requestCache = new inc.zhugastrov.imdb.cache.impl.SimpleCache[String, Seq[Movie]](java.time.Duration.ofSeconds(60), java.time.Duration.ofSeconds(60))
-  private val movieCache = new inc.zhugastrov.imdb.cache.impl.SimpleCache[String, Movie](java.time.Duration.ofSeconds(60), java.time.Duration.ofSeconds(60))
+  private val requestCache = new GuavaCacheImpl[String, Seq[Movie]](Duration.ofSeconds(60))
+  private val movieCache = new GuavaCacheImpl[String, Movie](Duration.ofSeconds(60))
   // Provide config to ImdbServiceImpl
   private val imdbService = new ImdbServiceImpl(moviesByIdService, parentsGuideService, titleNameToIdService, castByMovieService, requestCache, movieCache)
 

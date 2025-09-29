@@ -2,17 +2,17 @@ package inc.zhugastrov.imdb.cache
 
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import com.typesafe.config.Config
-import inc.zhugastrov.imdb.cache.impl.SimpleCache
+import inc.zhugastrov.imdb.cache.impl.GuavaCacheImpl
 import inc.zhugastrov.imdb.domain.Movie
 
 class CacheProvider extends AbstractModule {
   override def configure(): Unit = ()
 
 
-  private def provideCache[K, V](config: Config): SimpleCache[K, V] = {
+  private def provideCache[K, V](config: Config): GuavaCacheImpl[K, V] = {
     val ttl = config.getDuration("cache.ttl")
-    val cleanupInterval = config.getDuration("cache.cleanupInterval")
-    new SimpleCache[K, V](ttl, cleanupInterval)
+
+    new GuavaCacheImpl[K, V](ttl)
   }
 
   @Provides

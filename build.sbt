@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   "com.google.inject" % "guice" % "7.0.0",
   "ch.qos.logback" % "logback-classic" % "1.5.18",
   "org.slf4j" % "slf4j-api" % "2.0.17",
+  "com.google.guava" % "guava" % "33.5.0-jre",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.mockito" %% "mockito-scala" % "2.0.0" % Test
 )
